@@ -6,8 +6,8 @@ import java.util.ArrayList;
  * This class keeps track of the number of unique strings added to the
  * dictionary
  * 
- * @author dkauchak
- *
+ * @author Megan and Isabelle
+ * @version 1/26/18
  */
 public class Dictionary {
 	

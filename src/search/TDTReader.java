@@ -5,7 +5,8 @@ import java.io.File;
 /**
  * A document reader for the TDT corpus.  Opens the document file,
  * creates one Document at a time.
- * @author dkauchak
+ * @author Megan and Isabelle
+ * @version 1/26/18
  * 
  */
 public class TDTReader implements DocumentReader{

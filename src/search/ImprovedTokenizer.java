@@ -19,7 +19,8 @@ import java.util.ArrayList;
  *   becomes two tokens ``$" and ``10,000" and ``I wondered,is this a test?" becomes 8 
  *   tokens, with the ``," and ``?" as separate tokens.
  * 
- * @author dkauchak
+ * @author Megan and Isabelle
+ * @version 1/26/18
  *
  */
 public class ImprovedTokenizer implements Tokenizer{

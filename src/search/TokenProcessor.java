@@ -6,7 +6,8 @@ import java.util.ArrayList;
  * A class for performing various data normalization techniques
  * on tokens.
  * 
- * @author dkauchak
+ * @author Megan and Isabelle
+ *@version 1/26/18
  *
  */
 public class TokenProcessor{
