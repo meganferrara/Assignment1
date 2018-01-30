@@ -7,12 +7,12 @@ import java.util.ArrayList;
  * dictionary
  * 
  * @author Megan and Isabelle
- * @version 1/26/18
+ * @version 1/30/18
  */
 public class Dictionary {
 	
+	//Instead of an array you will be using something with a hash
 	private ArrayList<String> dictionaryList;
-	int dictionarySize;
 	
 	/**
 	 * Adds a word to the dictionary
@@ -21,11 +21,6 @@ public class Dictionary {
 	 */
 	public void addWord(String word){
 		//TODO
-		//Before adding a word --> check to see if this word already exists
-		//if it doesnt exist --> add the String word to the dictionary list AND increment the size of the dictionary
-		//if it does exist --> do NOT add to the dictionary list and do NOT increment the size of the dictionary
-		//idea: return the list at the end of the method to see if it works right
-		
 		if(dictionaryList.contains(word)) {
 			//don't do anything
 		} 
@@ -42,9 +37,8 @@ public class Dictionary {
 	 */
 	public int size() {
 		// TODO
-		// Idea: create a variable here that when method is called increments the size
-		// of dictionary instead of returning 0
-		
-		return dictionarySize++;
+		//Call dictionaryList.size() and it will return the number of 
+		//elements in array
+		return dictionaryList.size();
 	}
 }

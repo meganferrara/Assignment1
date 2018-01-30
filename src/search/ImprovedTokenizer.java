@@ -20,18 +20,24 @@ import java.util.ArrayList;
  *   tokens, with the ``," and ``?" as separate tokens.
  * 
  * @author Megan and Isabelle
- * @version 1/26/18
+ * @version 1/30/18
  *
  */
 public class ImprovedTokenizer implements Tokenizer{
 	// Given text, tokenize the text into individual tokens
 	// and return an ArrayList with those tokens
+	
+	
 	/**
 	 * Given text, tokenize the text into individual tokens and 
 	 * return and ArrayList with those tokens
 	 */
 	public ArrayList<String> tokenize(String text){	
 		//TODO
+		//1: separate words based on white space
+		//2: Check for single quotes at the beginning and end of words and separate from tokens
+		//3: Numbers stay together. Can start with "+" or "-". Can have any number of digits, commas and periods 
+		
 		return null;
 	}
 	
