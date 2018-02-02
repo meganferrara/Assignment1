@@ -1,4 +1,7 @@
 package search;
+
+import java.io.IOException;
+
 /**
  *  This class does the following: Create a new SimpleTokenizer object. Create a new TDTReader object 
  *  to read the data from the ap data file. Set the SimpleTokenizer as the tokenizer for the reader. 
@@ -12,5 +15,13 @@ package search;
  */
 
 public class Experimenter {
+	
+	public static void main (String [] args) throws IOException {
+		TDTReader readFile = new TDTReader ("ap89.txt"); 
+		
+		SimpleTokenizer sToken = new SimpleTokenizer();  
+		readFile.setTokenizer(sToken);
+	} 
+	
 	
 }

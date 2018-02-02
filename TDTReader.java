@@ -1,7 +1,9 @@
 package search;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -22,7 +24,9 @@ public class TDTReader implements DocumentReader {
 	@SuppressWarnings("unused")
 	private ArrayList<Document> docArrayList; // An Array List for documents
 	// Should we make an array list or a Linked List to save the documents in the
-	// corpus file??? TBD 
+	// corpus file??? TBD  
+	BufferedReader txtFile;  
+	String line;
 
 	/**
 	 * Prepares documentFile for reading and gets text of first document
@@ -30,33 +34,32 @@ public class TDTReader implements DocumentReader {
 	 * @param documentFile
 	 *            - The text file containing the TDT data with documents delimited
 	 *            by <DOC> ... </DOC>
+	 * @throws IOException 
 	 */
-	public TDTReader(String documentFile) {
+	public TDTReader(String documentFile) throws IOException {
 		// TODO
 		docArrayList = new ArrayList<Document>(); // save docs in an Array List 
+		
 		//I think when TDTReader is called, the document we're putting in parameters needs to be converted
 		//to String
 		//this.sampleFile = documentFile; // idk how this will get the sample.txt file given to us  
-		
-		FileReader egFile = new FileReader (documentFile);
-		BufferedReader txtFile = new BufferedReader(egFile); 
-		//read through each line of the txt file
-		while (txtFile.readLine().equals("<TEXT>")) {  
-//			//then keep adding the lines to the ArrayList
-//			docArrayList.add();  
-			String line = txtFile.readLine(); 
-			nextDocText+=line;
-			
-			if (txtFile.readLine().equals("</TEXT>")) {
+		try {
+			txtFile = new BufferedReader(new FileReader (documentFile)); 
+			while (!(txtFile.readLine()).equals("<TEXT>")) {  
+			} 
+			while (!(line = txtFile.readLine()).equals("</TEXT>")) {  
+				sampleFile+= "\n" + line; 
 			}
-				
+			System.out.println(sampleFile);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
 	// I am not sure if we need this helper method but if so make a method that
 	// reads through the physical documents and use the variable nextDocText
-	public void read() {
-
+	public void read() {			
 	}
 
 	/**
@@ -88,8 +91,11 @@ public class TDTReader implements DocumentReader {
 	 */
 	public boolean hasNext() {
 		// TODO
-		// This will return true if there is more text to be read after current document
-		return nextDocText != null;
+		// This will return true if there is more text to be read after current document 
+		if (sampleFile != null) {
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -103,16 +109,23 @@ public class TDTReader implements DocumentReader {
 		// Class
 		// You will then return a doc that calls the next document ID and sets the
 		// tokens
-		if (!hasNext()) {
+		if (sampleFile.equals(null)) {
 			System.out.println("There are no more documents!");
-			return null;
+		} 
+		ArrayList<String> arrayList = tokenizer.tokenize(sampleFile);
+//		if (tokenProcessor != null) {
+//			tokens = tokenProcessor.process(tokens);
+//		} 
+		Document doc = new Document(nextDocID, arrayList); 
+		try {
+			while (!(line = txtFile.readLine()).equals("</TEXT>")) {  
+				sampleFile+= "\n" + line; 
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		ArrayList<String> tokens = tokenizer.tokenize(nextDocText);
-		if (tokenProcessor != null) {
-			tokens = tokenProcessor.process(tokens);
-		}
-		Document doc = new Document(nextDocID, tokens);
-		return doc;
+		return doc;  
 	}
 
 	public void remove() {
