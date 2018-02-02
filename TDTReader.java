@@ -16,16 +16,13 @@ public class TDTReader implements DocumentReader {
 	private Tokenizer tokenizer = null;
 	private TokenProcessor tokenProcessor = null;
 	private int nextDocID = 0;
-	private String nextDocText; //think this should be a Document type
+	private String nextDocText; 
 	@SuppressWarnings("unused")
 	private String sampleFile;
 	@SuppressWarnings("unused")
 	private ArrayList<Document> docArrayList; // An Array List for documents
 	// Should we make an array list or a Linked List to save the documents in the
 	// corpus file??? TBD 
-	
-	//creating a Document object 
-	
 
 	/**
 	 * Prepares documentFile for reading and gets text of first document
@@ -39,22 +36,20 @@ public class TDTReader implements DocumentReader {
 		docArrayList = new ArrayList<Document>(); // save docs in an Array List 
 		//I think when TDTReader is called, the document we're putting in parameters needs to be converted
 		//to String
-		this.sampleFile = documentFile; // idk how this will get the sample.txt file given to us  
+		//this.sampleFile = documentFile; // idk how this will get the sample.txt file given to us  
 		
-		//i'm not too sure how to get the txt file
-		File egFile = new File ("C:\Users\itmh\assignment1\Assignment1\sample.txt");
-		BufferedReader txtFile = new BufferedReader(new FileReader(egFile)); 
+		FileReader egFile = new FileReader (documentFile);
+		BufferedReader txtFile = new BufferedReader(egFile); 
 		//read through each line of the txt file
-		while (sampleFile = txtFile.readLine() != null) {  
-			//if the text isn't the end
-			if (!sampleFile.equals("</DOC>")) { 
-				//then keep adding the lines to the ArrayList
-				docArrayList.add((sampleFile); 
-				System.out.print(docArrayList);
-				
+		while (txtFile.readLine().equals("<TEXT>")) {  
+//			//then keep adding the lines to the ArrayList
+//			docArrayList.add();  
+			String line = txtFile.readLine(); 
+			nextDocText+=line;
+			
+			if (txtFile.readLine().equals("</TEXT>")) {
 			}
-			//once it reaches the end, then create a Document object
-			Document doc = new Document (0, docArrayList);
+				
 		}
 	}
 
@@ -98,7 +93,7 @@ public class TDTReader implements DocumentReader {
 	}
 
 	/**
-	 * Process current document text and create a Document object, get next document
+	 * Process current document text, tokenize it and create a Document object, get next document
 	 * to process, return Document.
 	 */
 	public Document next() {
