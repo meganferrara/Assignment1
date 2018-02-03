@@ -115,8 +115,9 @@ public class TDTReader implements DocumentReader {
 		ArrayList<String> arrayList = tokenizer.tokenize(sampleFile);
 //		if (tokenProcessor != null) {
 //			tokens = tokenProcessor.process(tokens);
-//		} 
+//		}  
 		Document doc = new Document(nextDocID, arrayList); 
+		sampleFile = " ";
 		try {
 			while (!(line = txtFile.readLine()).equals("</TEXT>")) {  
 				sampleFile+= "\n" + line; 
