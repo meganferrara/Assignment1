@@ -1,5 +1,9 @@
 package search;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -15,12 +19,18 @@ public class TDTReader implements DocumentReader {
 	private TokenProcessor tokenProcessor = null;
 	private int nextDocID = 0;
 	private String nextDocText;
-	@SuppressWarnings("unused")
+	private BufferedReader txtFile;
 	private String sampleFile;
-	@SuppressWarnings("unused")
-	private ArrayList<Document> docArrayList; // An Array List for documents
-	// Should we make an array list or a Linked List to save the documents in the
-	// corpus file??? TBD
+	private ArrayList<Document> docArrayList; 
+	
+	//***-----NOTES OR CONCERNS--***//
+	//for the nextDocID should we start that at -1 so it numbers the docs starting at 0
+	//The txtFile will get the nextDocText to be read through the Buffered reader
+	//I moved the Buffered reader to the read method
+	
+	//-------------------------------//
+	
+	
 
 	/**
 	 * Prepares documentFile for reading and gets text of first document
@@ -31,15 +41,61 @@ public class TDTReader implements DocumentReader {
 	 */
 	public TDTReader(String documentFile) {
 		// TODO
+		docArrayList = new ArrayList<Document>();
 
-		docArrayList = new ArrayList<Document>(); // save docs in an Array List
-		this.sampleFile = documentFile; // idk how this will get the sample.txt file given to us
+		this.sampleFile = documentFile;
+		read();
+
 	}
 
-	// I am not sure if we need this helper method but if so make a method that
-	// reads through the physical documents and use the variable nextDocText
+	/**
+	 * Read gets the sampleFile from the constructor and passes that into the readNextDoc 
+	 * class then saves the document to an ID
+	 */
 	public void read() {
+		//I had to put the try catch statement in because Eclipse was yelling at me 
+		try {
+			txtFile = new BufferedReader(new FileReader(sampleFile));
+			nextDocText = readNextDoc();
+			nextDocID++;
+			//We need this here too because once we enter the while loop we
+			//will be creating new documents by calling the next() method
+			//but this will generate our first document that we save
+			Document doc = new Document(nextDocID, tokenizer.tokenize(nextDocText)); 
+			
+			
+			while (hasNext()) {
+				Document nextDoc = next();
+				int docID = nextDoc.getDocID();
+				docArrayList.add(nextDoc);
+				nextDocText = readNextDoc();
+			}
+			
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
+	public String readNextDoc() {
+		// read through each line of the txt file
+		try {
+			while (txtFile.readLine().equals("<TEXT>")) {
+				// //then keep adding the lines to the ArrayList
+				// docArrayList.add();
+				String line = txtFile.readLine();
+				nextDocText += line;
+
+				if (txtFile.readLine().equals("</TEXT>")) {
+				}
+
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return null;
 	}
 
 	/**
@@ -76,8 +132,8 @@ public class TDTReader implements DocumentReader {
 	}
 
 	/**
-	 * Process current document text and create a Document object, get next document
-	 * to process, return Document.
+	 * Process current document text, tokenize it and create a Document object, get
+	 * next document to process, return Document.
 	 */
 	public Document next() {
 		// TODO
@@ -87,7 +143,7 @@ public class TDTReader implements DocumentReader {
 		// You will then return a doc that calls the next document ID and sets the
 		// tokens
 		if (!hasNext()) {
-			System.out.println("There is no more documents!");
+			System.out.println("There are no more documents!");
 			return null;
 		}
 		ArrayList<String> tokens = tokenizer.tokenize(nextDocText);
