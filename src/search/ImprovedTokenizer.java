@@ -34,23 +34,28 @@ public class ImprovedTokenizer implements Tokenizer{
 	 */
 	public ArrayList<String> tokenize(String text){	
 		//TODO
+		
 		//1: separate words based on white space (look at simpleTokenizer)
 		text = text.replaceAll("\\s+", " ");
 		
 		if(text.startsWith(" ")) {
 			//put something here that will take care of the whitespace before word
-			
+			text = text.substring(1, text.length());
 		}
 		if(text.endsWith(" ")) {
 			//put something here that will take care of the whitespace after word
+			text = text.substring(0, text.length()-1);
 		}
 		//You will probably need something that will save this word after going through if statements
 		//splits the tokens above from whitespace around it
 		String[] tempTokens = text.split(" "); 
+		System.out.println(text.toString());
 		
 		//2: Check for single quotes at the beginning and end of words and separate from tokens
 		//You will probably pass the tempTokens through two checkers to check for at the beginning and at the end
-		
+		if(text.startsWith("'")) {
+	
+		}
 		
 		//3: Numbers stay together. Can start with "+" or "-". Can have any number of digits, commas and periods. 
 		//Must end in a digit 

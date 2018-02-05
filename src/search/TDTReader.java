@@ -49,26 +49,22 @@ public class TDTReader implements DocumentReader {
 		//save docs in an Array List
 		docArrayList = new ArrayList<Document>(); 
 		
-		tokenizer = new SimpleTokenizer(); 
-		this.file = documentFile; // idk how this will get the sample.txt file given to us  
+		//tokenizer = new SimpleTokenizer(); 
+		tokenizer = new ImprovedTokenizer();
+		this.file = documentFile; 
 		read();
 		next();
 	}
 
-	// I am not sure if we need this helper method but if so make a method that
-	// reads through the physical documents and use the variable nextDocText
+
 	public void read() throws IOException {	 
 		try {
 			txtFile = new BufferedReader(new FileReader (file));
-			//if the line isn't the beginning of the article, keep reading
-			//if the line isn't the end of the article
 			while ((txtFile.readLine()).equals("<DOC>") || !(txtFile.readLine()).equals("</DOC>")) {   
-				//if (!(line = txtFile.readLine()).equals("</DOC>")) {
-					//then read each line and add it to sampleFile
 					line = txtFile.readLine();
-					sampleFile+= "\n" + line; 
-					System.out.println(sampleFile); 
-				//}   	
+					//sampleFile+= "\n" + line; 
+					sampleFile+= line + "\n"; 
+					//System.out.println(sampleFile); 
 			}
 			 
 			nextDocID++;
@@ -77,7 +73,6 @@ public class TDTReader implements DocumentReader {
 			
 			while (hasNext()) {
 				Document nextDoc = next();
-				//int docID = nextDoc.getDocID();
 				documentArray.add(nextDoc);
 			}
 		} catch (FileNotFoundException e) {
@@ -93,8 +88,6 @@ public class TDTReader implements DocumentReader {
 	 */
 	public void setTokenizer(Tokenizer tokenizer) {
 		// TODO
-		// This sets the tokenizer variable initialized at the top to the parameter
-		// being passed in
 		this.tokenizer = tokenizer;
 	}
 
@@ -105,8 +98,6 @@ public class TDTReader implements DocumentReader {
 	 */
 	public void setTokenProcessor(TokenProcessor tokenProcessor) {
 		// TODO
-		// This sets the tokenProcessor variable initialized at the top to the parameter
-		// being passed in
 		this.tokenProcessor = tokenProcessor;
 	}
 
@@ -115,7 +106,6 @@ public class TDTReader implements DocumentReader {
 	 */
 	public boolean hasNext() {
 		// TODO
-		// This will return true if there is more text to be read after current document 
 		return nextDocText != null;
 	}
 
@@ -126,34 +116,18 @@ public class TDTReader implements DocumentReader {
 	public Document next() {  
 		ArrayList<String> arrayList = new ArrayList<String>(); 
 		// TODO
-		// You will want an Array List of Type String for your tokens of your doc text
-		// Then you will have this array list of tokens processed in the TokenProcessor
-		// Class
-		// You will then return a doc that calls the next document ID and sets the
-		// tokens
 		if (!hasNext()) {
 			System.out.println("There are no more documents!"); 
 			return null;
 		} 
-		
 		try {
 			while ((txtFile.readLine()).equals("<DOC>") || !(line = txtFile.readLine()).equals("</DOC>")) {   
-				//if (!(line = txtFile.readLine()).equals("</DOC>")) {
-					//then read each line and add it to sampleFile
-					sampleFile+= "\n" + line; 
-					//System.out.println(sampleFile); 
-				//}   	
+					sampleFile+= "\n" + line;   	
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-				//arrayList.add(sampleFile);
-				
-//				if (tokenProcessor != null) {
-//					tokens = tokenProcessor.process(tokens);
-//				}  
-
 		Document doc = new Document(nextDocID++, tokenizer.tokenize(sampleFile)); 
 		return doc;  
 	}
