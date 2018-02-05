@@ -39,18 +39,28 @@ public class ImprovedTokenizer implements Tokenizer{
 		
 		if(text.startsWith(" ")) {
 			//put something here that will take care of the whitespace before word
+			
 		}
 		if(text.endsWith(" ")) {
 			//put something here that will take care of the whitespace after word
 		}
 		//You will probably need something that will save this word after going through if statements
-		//do we have to split the word from the whitespace?
+		//splits the tokens above from whitespace around it
 		String[] tempTokens = text.split(" "); 
 		
 		//2: Check for single quotes at the beginning and end of words and separate from tokens
+		//You will probably pass the tempTokens through two checkers to check for at the beginning and at the end
 		
 		
-		//3: Numbers stay together. Can start with "+" or "-". Can have any number of digits, commas and periods 
+		//3: Numbers stay together. Can start with "+" or "-". Can have any number of digits, commas and periods. 
+		//Must end in a digit 
+		
+		//4:Check for a single letter followed by a period, if the period is followed by another single letter and period 
+		//then this will be counted as an abbreviation and should be checked until there is no more single letters and periods following
+		//Once the end of the abbreviation is found you will go through and remove all the periods
+		//if not an abbreviation separate these into individual tokens.
+		
+		//5: These characters  ``. , ? : ; " ` ( ) % $"  should be treated as separate tokens 
 		
 		return null;
 	}
