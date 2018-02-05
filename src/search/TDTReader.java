@@ -15,88 +15,76 @@ import java.util.ArrayList;
  * 
  */
 public class TDTReader implements DocumentReader {
-	private Tokenizer tokenizer = null;
+	private Tokenizer tokenizer;
 	private TokenProcessor tokenProcessor = null;
-	private int nextDocID = 0;
-	private String nextDocText;
-	private BufferedReader txtFile;
+	private int nextDocID = -1;
+	private String nextDocText; 
+	@SuppressWarnings("unused")
 	private String sampleFile;
-	private ArrayList<Document> docArrayList; 
-	
-	//***-----NOTES OR CONCERNS--***//
-	//for the nextDocID should we start that at -1 so it numbers the docs starting at 0
-	//The txtFile will get the nextDocText to be read through the Buffered reader
-	//I moved the Buffered reader to the read method
-	
-	//-------------------------------//
-	
-	
+	@SuppressWarnings("unused")
+	private ArrayList<Document> docArrayList; // An Array List for documents
+	// Should we make an array list or a Linked List to save the documents in the
+	// corpus file??? TBD  
+	BufferedReader txtFile;  
+	String line; 
+	String file;
+	ArrayList<Document> documentArray = new ArrayList<Document>();
 
+	//***-----NOTES OR CONCERNS--***//
+		//for the nextDocID should we start that at -1 so it numbers the docs starting at 0
+		//The txtFile will get the nextDocText to be read through the Buffered reader
+		//I moved the Buffered reader to the read method
+		
+		//-------------------------------//
+	
 	/**
 	 * Prepares documentFile for reading and gets text of first document
 	 * 
 	 * @param documentFile
 	 *            - The text file containing the TDT data with documents delimited
 	 *            by <DOC> ... </DOC>
+	 * @throws IOException 
 	 */
-	public TDTReader(String documentFile) {
-		// TODO
-		docArrayList = new ArrayList<Document>();
-
-		this.sampleFile = documentFile;
+	public TDTReader(String documentFile) throws IOException {
+		//save docs in an Array List
+		docArrayList = new ArrayList<Document>(); 
+		
+		tokenizer = new SimpleTokenizer(); 
+		this.file = documentFile; // idk how this will get the sample.txt file given to us  
 		read();
-
+		next();
 	}
 
-	/**
-	 * Read gets the sampleFile from the constructor and passes that into the readNextDoc 
-	 * class then saves the document to an ID
-	 */
-	public void read() {
-		//I had to put the try catch statement in because Eclipse was yelling at me 
+	// I am not sure if we need this helper method but if so make a method that
+	// reads through the physical documents and use the variable nextDocText
+	public void read() throws IOException {	 
 		try {
-			txtFile = new BufferedReader(new FileReader(sampleFile));
-			nextDocText = readNextDoc();
+			txtFile = new BufferedReader(new FileReader (file));
+			//if the line isn't the beginning of the article, keep reading
+			//if the line isn't the end of the article
+			while ((txtFile.readLine()).equals("<DOC>") || !(txtFile.readLine()).equals("</DOC>")) {   
+				//if (!(line = txtFile.readLine()).equals("</DOC>")) {
+					//then read each line and add it to sampleFile
+					line = txtFile.readLine();
+					sampleFile+= "\n" + line; 
+					System.out.println(sampleFile); 
+				//}   	
+			}
+			 
 			nextDocID++;
-			//We need this here too because once we enter the while loop we
-			//will be creating new documents by calling the next() method
-			//but this will generate our first document that we save
-			Document doc = new Document(nextDocID, tokenizer.tokenize(nextDocText)); 
-			
+			Document doc = new Document (nextDocID, tokenizer.tokenize(sampleFile)); 
+			documentArray.add(doc);  
 			
 			while (hasNext()) {
 				Document nextDoc = next();
-				int docID = nextDoc.getDocID();
-				docArrayList.add(nextDoc);
-				nextDocText = readNextDoc();
+				//int docID = nextDoc.getDocID();
+				documentArray.add(nextDoc);
 			}
-			
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-	}
-
-	public String readNextDoc() {
-		// read through each line of the txt file
-		try {
-			while (txtFile.readLine().equals("<TEXT>")) {
-				// //then keep adding the lines to the ArrayList
-				// docArrayList.add();
-				String line = txtFile.readLine();
-				nextDocText += line;
-
-				if (txtFile.readLine().equals("</TEXT>")) {
-				}
-
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return null;
-	}
+		} 
+	} 
 
 	/**
 	 * Set the tokenizer for this reader
@@ -127,15 +115,16 @@ public class TDTReader implements DocumentReader {
 	 */
 	public boolean hasNext() {
 		// TODO
-		// This will return true if there is more text to be read after current document
+		// This will return true if there is more text to be read after current document 
 		return nextDocText != null;
 	}
 
 	/**
-	 * Process current document text, tokenize it and create a Document object, get
-	 * next document to process, return Document.
+	 * Process current document text, tokenize it and create a Document object, get next document
+	 * to process, return Document.
 	 */
-	public Document next() {
+	public Document next() {  
+		ArrayList<String> arrayList = new ArrayList<String>(); 
 		// TODO
 		// You will want an Array List of Type String for your tokens of your doc text
 		// Then you will have this array list of tokens processed in the TokenProcessor
@@ -143,15 +132,30 @@ public class TDTReader implements DocumentReader {
 		// You will then return a doc that calls the next document ID and sets the
 		// tokens
 		if (!hasNext()) {
-			System.out.println("There are no more documents!");
+			System.out.println("There are no more documents!"); 
 			return null;
+		} 
+		
+		try {
+			while ((txtFile.readLine()).equals("<DOC>") || !(line = txtFile.readLine()).equals("</DOC>")) {   
+				//if (!(line = txtFile.readLine()).equals("</DOC>")) {
+					//then read each line and add it to sampleFile
+					sampleFile+= "\n" + line; 
+					//System.out.println(sampleFile); 
+				//}   	
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		ArrayList<String> tokens = tokenizer.tokenize(nextDocText);
-		if (tokenProcessor != null) {
-			tokens = tokenProcessor.process(tokens);
-		}
-		Document doc = new Document(nextDocID, tokens);
-		return doc;
+				//arrayList.add(sampleFile);
+				
+//				if (tokenProcessor != null) {
+//					tokens = tokenProcessor.process(tokens);
+//				}  
+
+		Document doc = new Document(nextDocID++, tokenizer.tokenize(sampleFile)); 
+		return doc;  
 	}
 
 	public void remove() {
