@@ -57,16 +57,18 @@ public class ImprovedTokenizer implements Tokenizer {
 		//ArrayList<String> singleQuotes = new ArrayList<String>;
 		
 		//Temp: tempTokens --> this is basically duplicating the tempTokens string to look through
-		for(String temp: tempTokens) {
-			while(temp.startsWith("'")) {
+		//for(String temp: tempTokens) {
+		for(int i = 0; i <= tempTokens.length; i++) {
+			String temp = tempTokens[i];
+			if(temp.startsWith("'")) {
 				temp.split("'");
 				System.out.println("# of Starts with SingleQuote Tokens:"+tempTokens.length);
 				//singleQuotes.add("'");
 				//text = text.substring(1);
 			}
-			while(temp.endsWith("'")) {
+			if(temp.endsWith("'")) {
 				temp.split("'");
-				//System.out.println("Ends with SingleQuote Tokens:"+tempTokens.length);
+				System.out.println("Ends with SingleQuote Tokens:"+tempTokens.length);
 				//text = text.substring(0, text.length()-1);
 			}
 				
@@ -82,6 +84,8 @@ public class ImprovedTokenizer implements Tokenizer {
 		//then this will be counted as an abbreviation and should be checked until there is no more single letters and periods following
 		//Once the end of the abbreviation is found you will go through and remove all the periods
 		//if not an abbreviation separate these into individual tokens.
+		
+		
 		
 		//5: These characters  ``. , ? : ; " ` ( ) % $"  should be treated as separate tokens 
 		

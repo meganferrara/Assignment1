@@ -17,7 +17,7 @@ import java.util.ArrayList;
 public class TDTReader implements DocumentReader {
 	private Tokenizer tokenizer;
 	private TokenProcessor tokenProcessor = null;
-	private int nextDocID = -1;
+	private int nextDocID = 0;
 	private String nextDocText; 
 	@SuppressWarnings("unused")
 	private String sampleFile;
@@ -67,8 +67,9 @@ public class TDTReader implements DocumentReader {
 					//System.out.println(sampleFile); 
 			}
 			 
-			nextDocID++;
+			
 			Document doc = new Document (nextDocID, tokenizer.tokenize(sampleFile)); 
+			nextDocID++;
 			documentArray.add(doc);  
 			
 			while (hasNext()) {
