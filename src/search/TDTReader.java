@@ -19,15 +19,15 @@ public class TDTReader implements DocumentReader {
 	private TokenProcessor tokenProcessor = null;
 	private int nextDocID = 0;
 	private String nextDocText; 
-	@SuppressWarnings("unused")
+
 	private String sampleFile;
-	@SuppressWarnings("unused")
+
 	private ArrayList<Document> docArrayList; // An Array List for documents
 	// Should we make an array list or a Linked List to save the documents in the
 	// corpus file??? TBD  
 	BufferedReader txtFile;  
-	String line; 
-	String file;
+	private String line; 
+	private String file;
 	ArrayList<Document> documentArray = new ArrayList<Document>();
 
 	//***-----NOTES OR CONCERNS--***//
@@ -59,11 +59,13 @@ public class TDTReader implements DocumentReader {
 
 	public void read() throws IOException {	 
 		try {
+			
 			txtFile = new BufferedReader(new FileReader (file));
-			while ((txtFile.readLine()).equals("<DOC>") || !(txtFile.readLine()).equals("</DOC>")) {   
+			line = txtFile.readLine();
+			while (line != null && (txtFile.readLine()).equals("<DOC>") || !(txtFile.readLine()).equals("</DOC>")) {   
 					line = txtFile.readLine();
-					//sampleFile+= "\n" + line; 
-					sampleFile+= line + "\n"; 
+					sampleFile+= "\n" + line; 
+					//sampleFile+= line + "\n"; 
 					//System.out.println(sampleFile); 
 			}
 			 

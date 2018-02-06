@@ -38,43 +38,46 @@ public class ImprovedTokenizer implements Tokenizer {
 		text = text.replaceAll("\\s+", " ");
 		
 		if(text.startsWith(" ")) {
-			//put something here that will take care of the whitespace before word
-			text = text.substring(1, text.length());
+			text = text.substring(1);
 		}
 		if(text.endsWith(" ")) {
-			//put something here that will take care of the whitespace after word
 			text = text.substring(0, text.length()-1);
 		}
-		//You will probably need something that will save this word after going through if statements
-		//splits the tokens above from whitespace around it
-		String[] tempTokens = text.split(" "); 
-		System.out.println("# of Tokens split on whitespace:"+tempTokens.length);
 		
+		String[] tempTokens = text.split(" "); 
 		
 		
 		//2: Check for single quotes at the beginning and end of words and separate from tokens
 		//You will probably pass the tempTokens through two checkers to check for at the beginning and at the end
-		//ArrayList<String> singleQuotes = new ArrayList<String>;
+		ArrayList<String> firstPass = new ArrayList<String>();
 		
 		//Temp: tempTokens --> this is basically duplicating the tempTokens string to look through
-		//for(String temp: tempTokens) {
-		for(int i = 0; i <= tempTokens.length; i++) {
-			String temp = tempTokens[i];
-			if(temp.startsWith("'")) {
-				temp.split("'");
-				System.out.println("# of Starts with SingleQuote Tokens:"+tempTokens.length);
-				//singleQuotes.add("'");
-				//text = text.substring(1);
+		for(String temp: tempTokens) {
+			
+			while(temp.startsWith("'")) {
+				firstPass.add("'");
+				temp = temp.substring(1);
 			}
-			if(temp.endsWith("'")) {
-				temp.split("'");
-				System.out.println("Ends with SingleQuote Tokens:"+tempTokens.length);
-				//text = text.substring(0, text.length()-1);
+		
+
+			int endingSingleQuotes = 0;
+			
+			while(temp.endsWith("'")) {
+				endingSingleQuotes++;
+				temp = temp.substring(0, temp.length()-1);
 			}
+			
+			firstPass.add(temp);
+			
+			for(int i = 0; i < endingSingleQuotes; i++) {
+				firstPass.add("'");
 				
+			}
+		
+			
 		}
 		
-		
+		System.out.println("First Pass: "+ firstPass);
 		
 		
 		//3: Numbers stay together. Can start with "+" or "-". Can have any number of digits, commas and periods. 
@@ -85,6 +88,28 @@ public class ImprovedTokenizer implements Tokenizer {
 		//Once the end of the abbreviation is found you will go through and remove all the periods
 		//if not an abbreviation separate these into individual tokens.
 		
+		ArrayList<String> secondPass = new ArrayList<String>();
+		//I.B.M.   <-- for reference when looking at the for loop and thinking in terms of index
+		for(int i = 0; i < firstPass.size(); i++) {
+			int k = i; //This will be to check the next position in the token
+			while(k+1 < firstPass.size() && firstPass.get(k).length() == 1 && firstPass.get(k+1).equals(".")) {
+				k+= 2;
+			}
+			if(k - i > 2) {
+				//making an empty string that we will add our abbreviation to
+				String abbrevTokens = "";  
+				for(int j = i; j < k; j+=2) {
+					abbrevTokens += firstPass.get(j);
+				}
+				
+				secondPass.add(abbrevTokens);
+				
+				
+				i = k-1;
+			}else {
+				secondPass.add(firstPass.get(i));
+			}
+		}
 		
 		
 		//5: These characters  ``. , ? : ; " ` ( ) % $"  should be treated as separate tokens 
