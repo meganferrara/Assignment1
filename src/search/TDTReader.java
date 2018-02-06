@@ -26,7 +26,7 @@ public class TDTReader implements DocumentReader {
 	// Should we make an array list or a Linked List to save the documents in the
 	// corpus file??? TBD  
 	BufferedReader txtFile;  
-	private String line; 
+	String line; 
 	private String file;
 	ArrayList<Document> documentArray = new ArrayList<Document>();
 
@@ -60,13 +60,19 @@ public class TDTReader implements DocumentReader {
 	public void read() throws IOException {	 
 		try {
 			
-			txtFile = new BufferedReader(new FileReader (file));
-			line = txtFile.readLine();
-			while (line != null && (txtFile.readLine()).equals("<DOC>") || !(txtFile.readLine()).equals("</DOC>")) {   
-					line = txtFile.readLine();
-					sampleFile+= "\n" + line; 
-					//sampleFile+= line + "\n"; 
-					//System.out.println(sampleFile); 
+			txtFile = new BufferedReader(new FileReader (file)); 
+				line = txtFile.readLine(); 
+			
+			//this while loop takes the pointer to the first line of article
+			while (!(txtFile.readLine()).equals("<DOC>")) {
+			}
+			//pointer still at first line of article
+			while (line != null && !(line = txtFile.readLine()).equals("</DOC>")) {   
+				//line = txtFile.readLine();
+				//takes that line and adds it to sampleFile
+				sampleFile+= "\n" + line; 
+				//sampleFile+= line + "\n"; 
+				System.out.println(sampleFile); 
 			}
 			 
 			
