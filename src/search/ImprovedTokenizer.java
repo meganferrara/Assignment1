@@ -83,6 +83,7 @@ public class ImprovedTokenizer implements Tokenizer {
 		//3: Numbers stay together. Can start with "+" or "-". Can have any number of digits, commas and periods. 
 		//Must end in a digit 
 		
+		
 		//4:Check for a single letter followed by a period, if the period is followed by another single letter and period 
 		//then this will be counted as an abbreviation and should be checked until there is no more single letters and periods following
 		//Once the end of the abbreviation is found you will go through and remove all the periods
@@ -113,7 +114,13 @@ public class ImprovedTokenizer implements Tokenizer {
 		
 		
 		//5: These characters  ``. , ? : ; " ` ( ) % $"  should be treated as separate tokens 
-		
+		String [] punct = {".", ",", "?", ":", ";", "'", "(", ")", "%", "$"};  
+		for (int i=0; i<punct.length; i++) {
+			if (text.equals(punct[i])) { 
+				String regex = "\\p{Punct}";
+				text.replaceAll(regex, " ");
+			}
+		}
 		return null;
 	}
 
