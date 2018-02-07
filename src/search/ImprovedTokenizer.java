@@ -1,6 +1,8 @@
 package search;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.regex.Pattern;
 
 /**
  * An improved tokenizer class that uses the following tokenization rules: -
@@ -27,63 +29,72 @@ public class ImprovedTokenizer implements Tokenizer {
 	// Given text, tokenize the text into individual tokens
 	// and return an ArrayList with those tokens
 
+	ArrayList<String> tokenList; 
 	/**
 	 * Given text, tokenize the text into individual tokens and 
-	 * return and ArrayList with those tokens
+	 * return an ArrayList with those tokens
 	 */
 	public ArrayList<String> tokenize(String text){	
 		//TODO
+		//1: separate words based on white space (look at simpleTokenizer) and put into ArrayList 
+		//this ArrayList contains all the words
+		tokenList = new ArrayList<String>(Arrays.asList(text.split("\\s+")));
 		
-		//1: separate words based on white space (look at simpleTokenizer)
-		text = text.replaceAll("\\s+", " ");
+		//splitting text based on whitespace and punctuation, and putting them in an array
+//		aList = text.split("\p{Punct}"); 
 		
-		if(text.startsWith(" ")) {
-			text = text.substring(1);
+		//not too sure if we need this for loop because the text won't have whitespace at the front or back
+		for (int i=0; i<tokenList.size(); i++) {
+			if(tokenList.get(i).startsWith(" ")) {
+				text = text.substring(1, text.length());
+			}
+			if(tokenList.get(i).endsWith(" ")) {
+				text = text.substring(0, text.length()-1);
+			}
 		}
-		if(text.endsWith(" ")) {
-			text = text.substring(0, text.length()-1);
-		}
 		
-		String[] tempTokens = text.split(" "); 
-		
+//		String[] tempTokens = text.split(" "); 
 		
 		//2: Check for single quotes at the beginning and end of words and separate from tokens
 		//You will probably pass the tempTokens through two checkers to check for at the beginning and at the end
 		ArrayList<String> firstPass = new ArrayList<String>();
 		
 		//Temp: tempTokens --> this is basically duplicating the tempTokens string to look through
-		for(String temp: tempTokens) {
-			
+		for(int i=0; i<tokenList.size(); i++) {
+			String temp = tokenList.get(i);
 			while(temp.startsWith("'")) {
 				firstPass.add("'");
-				temp = temp.substring(1);
+				temp = temp.substring(1, temp.length());
+				//System.out.print(temp);
 			}
-		
-
+			
 			int endingSingleQuotes = 0;
 			
 			while(temp.endsWith("'")) {
 				endingSingleQuotes++;
 				temp = temp.substring(0, temp.length()-1);
+				//System.out.println("words that end with ': " + temp);
 			}
 			
-			firstPass.add(temp);
-			
-			for(int i = 0; i < endingSingleQuotes; i++) {
-				firstPass.add("'");
-				
-			}
-		
-			
+			//firstPass.add(temp);
+			//what is this for loop for?
+//			for(int i = 0; i < endingSingleQuotes; i++) {
+//				firstPass.add("'");				
+//			}	
 		}
 		
-		System.out.println("First Pass: "+ firstPass);
-		
-		
+		//System.out.println("First Pass: "+ firstPass);
+	
 		//3: Numbers stay together. Can start with "+" or "-". Can have any number of digits, commas and periods. 
 		//Must end in a digit 
-		
-		
+		for (int i=0; i<tokenList.size(); i++) { 
+			String temp = tokenList.get(i);
+			if (Pattern.matches("[$(']{0,}[+-]{0,}\\d+[,.]+\\d+[.,?!::'%)]", tokenList.get(i))) {
+				temp.replaceAll("[,.!?();:']", ""); 
+				//System.out.print(temp);
+			}
+		}
+		 
 		//4:Check for a single letter followed by a period, if the period is followed by another single letter and period 
 		//then this will be counted as an abbreviation and should be checked until there is no more single letters and periods following
 		//Once the end of the abbreviation is found you will go through and remove all the periods
@@ -114,16 +125,22 @@ public class ImprovedTokenizer implements Tokenizer {
 		
 		
 		//5: These characters  ``. , ? : ; " ` ( ) % $"  should be treated as separate tokens 
-		String [] punct = {".", ",", "?", ":", ";", "'", "(", ")", "%", "$"};  
-		for (int i=0; i<punct.length; i++) {
-			if (text.equals(punct[i])) { 
-				String regex = "\\p{Punct}";
-				text.replaceAll(regex, " ");
+		//NEED TO THINK ABOUT THIS MORE because punctuation may not be separated from words
+		String [] punct = {".", ",", "?", ":", ";", "'", "(", ")", "%", "$", "!"};  
+		for (int i=0; i<punct.length; i++) { 
+			for (int j=0; j<tokenList.size(); j++) {
+				String temp = tokenList.get(j);
+				if (temp.equals(punct[i])) { 
+					temp.replaceAll("[,.!$%?();:']", " " + punct[i]+ " ");
+					System.out.println(temp);
+				}
 			}
-		}
-		return null;
+		} 
+		return tokenList;
 	}
 
+	
+	
 	/**
 	 * This is just here to help you test some examples. You may remove it if you
 	 * want, but I encourage you to write similar tests.
