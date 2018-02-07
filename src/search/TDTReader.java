@@ -80,7 +80,7 @@ public class TDTReader implements DocumentReader {
 				// takes that line and adds it to sampleFile
 				sampleFile += "\n" + line;
 				// sampleFile+= line + "\n";
-				System.out.println(sampleFile);
+				//System.out.println(sampleFile);
 			}
 
 			Document doc = new Document(nextDocID, tokenizer.tokenize(sampleFile));

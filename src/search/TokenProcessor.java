@@ -11,6 +11,13 @@ import java.util.ArrayList;
  *
  */
 public class TokenProcessor{
+	private boolean setLowercase = false; 
+	private boolean setStem = false;
+	private boolean setFoldNumbers = false;
+	private ArrayList<String> stopList = new ArrayList<String>(); 
+	
+	private Porter porter;
+	
 	
 	/**
 	 * Set whether or not to lowercase the tokens.
@@ -19,6 +26,7 @@ public class TokenProcessor{
 	 */
 	public void setLowercase(boolean b){
 		//TODO
+		setLowercase = b;
 	}
 	
 	/**
@@ -27,6 +35,7 @@ public class TokenProcessor{
 	 */
 	public void setStem(boolean b){
 		//TODO
+		setStem = b;
 	}
 
 	/**
@@ -36,6 +45,7 @@ public class TokenProcessor{
 	 */
 	public void setFoldNumbers(boolean b){
 		//TODO
+		setFoldNumbers = b;
 	}
 	
 	/**
