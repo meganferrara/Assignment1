@@ -11,7 +11,7 @@ import java.util.ArrayList;
  * Document at a time.
  * 
  * @author Megan and Isabelle
- * @version 1/30/18
+ * @version 2/7/18
  * 
  */
 public class TDTReader implements DocumentReader {
@@ -48,7 +48,7 @@ public class TDTReader implements DocumentReader {
 	 */
 	public TDTReader(String documentFile) throws IOException {
 		// save docs in an Array List
-		docArrayList = new ArrayList<Document>();
+		// docArrayList = new ArrayList<Document>();
 
 		// tokenizer = new SimpleTokenizer();
 		tokenizer = new ImprovedTokenizer();
@@ -65,7 +65,6 @@ public class TDTReader implements DocumentReader {
 
 			// this while loop takes the pointer to the first line of article
 			while (!(txtFile.readLine()).equals("<DOC>")) {
-
 			}
 
 			if (line.equals("<DOC>")) {
@@ -80,11 +79,13 @@ public class TDTReader implements DocumentReader {
 				// takes that line and adds it to sampleFile
 				sampleFile += "\n" + line;
 				// sampleFile+= line + "\n";
-				//System.out.println(sampleFile);
-			}
+				// System.out.println(sampleFile);
 
+			}
+			// System.out.println(sampleFile);
 			Document doc = new Document(nextDocID, tokenizer.tokenize(sampleFile));
 			nextDocID++;
+			sampleFile = " ";
 			documentArray.add(doc);
 
 			while (hasNext()) {
@@ -139,12 +140,14 @@ public class TDTReader implements DocumentReader {
 		try {
 			while ((txtFile.readLine()).equals("<DOC>") || !(line = txtFile.readLine()).equals("</DOC>")) {
 				sampleFile += "\n" + line;
+				System.out.println(sampleFile);
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		Document doc = new Document(nextDocID++, tokenizer.tokenize(sampleFile));
+		sampleFile = " ";
 		return doc;
 	}
 

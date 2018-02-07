@@ -1,1 +1,5 @@
 /bin/
+src/search/ImprovedTokenizer.java
+src/search/ImprovedTokenizer.java
+src/search/TDTReader.java
+src/search/TokenProcessor.java

@@ -1,6 +1,9 @@
 package search;
 
 import java.util.ArrayList;
+
+import java.util.Arrays;
+
 import java.util.regex.Pattern;
 
 /**
@@ -21,7 +24,7 @@ import java.util.regex.Pattern;
  * ``," and ``?" as separate tokens.
  * 
  * @author Megan and Isabelle
- * @version 1/30/18
+ * @version 2/7/18
  *
  */
 public class ImprovedTokenizer implements Tokenizer {

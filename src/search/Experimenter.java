@@ -1,6 +1,7 @@
 package search;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  *  This class does the following: Create a new SimpleTokenizer object. Create a new TDTReader object 
@@ -20,8 +21,15 @@ public class Experimenter {
 		TDTReader readFile = new TDTReader ("ap89.txt"); 
 		
 		SimpleTokenizer sToken = new SimpleTokenizer();  
-		readFile.setTokenizer(sToken);
+		readFile.setTokenizer(sToken); 
+		ImprovedTokenizer iToken = new ImprovedTokenizer(); 
+		readFile.setTokenizer(iToken); 
+		
+		ArrayList<String> stopList = new ArrayList<String>();  
+		stopList.add("stoplist"); 
+		TokenProcessor list = new TokenProcessor(); 
+		list.setStopList(stopList); 
+		
+		
 	} 
-	
-	
 }

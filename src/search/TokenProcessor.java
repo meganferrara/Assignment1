@@ -7,7 +7,7 @@ import java.util.ArrayList;
  * on tokens.
  * 
  * @author Megan and Isabelle
- *@version 1/26/18
+ * @version 1/26/18
  *
  */
 public class TokenProcessor{
@@ -19,14 +19,17 @@ public class TokenProcessor{
 	private Porter porter;
 	
 	
+	
 	/**
 	 * Set whether or not to lowercase the tokens.
 	 * 
 	 * @param b
 	 */
-	public void setLowercase(boolean b){
-		//TODO
-		setLowercase = b;
+
+	
+	public void setLowercase(boolean b){   
+		setLowercase = b;  		
+
 	}
 	
 	/**
@@ -34,8 +37,8 @@ public class TokenProcessor{
 	 * @param b
 	 */
 	public void setStem(boolean b){
-		//TODO
-		setStem = b;
+		setStem = b; 
+
 	}
 
 	/**
@@ -44,7 +47,7 @@ public class TokenProcessor{
 	 * @param b
 	 */
 	public void setFoldNumbers(boolean b){
-		//TODO
+
 		setFoldNumbers = b;
 	}
 	
@@ -55,7 +58,8 @@ public class TokenProcessor{
 	 * @param list The list of stop words
 	 */
 	public void setStopList(ArrayList<String> list){
-		//TODO
+		
+		//BufferedReader list =  
 	}
 
 	/**
