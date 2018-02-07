@@ -11,6 +11,13 @@ import java.util.ArrayList;
  *
  */
 public class TokenProcessor{
+	private boolean setLowercase = false; 
+	private boolean setStem = false;
+	private boolean setFoldNumbers = false;
+	private ArrayList<String> stopList = new ArrayList<String>(); 
+	
+	private Porter porter;
+	
 	
 	private boolean setLowercase = false; 
 	private boolean setStem = false;
@@ -24,8 +31,14 @@ public class TokenProcessor{
 	 * 
 	 * @param b
 	 */
+<<<<<<< HEAD
+	public void setLowercase(boolean b){
+		//TODO
+		setLowercase = b;
+=======
 	public void setLowercase(boolean b){   
 		setLowercase = b;  		
+>>>>>>> 3e7356b96486f79bece2ae6ceec95910f399bbd6
 	}
 	
 	/**
@@ -33,8 +46,13 @@ public class TokenProcessor{
 	 * @param b
 	 */
 	public void setStem(boolean b){
+<<<<<<< HEAD
+		//TODO
+		setStem = b;
+=======
 		setStem = b; 
 		
+>>>>>>> 3e7356b96486f79bece2ae6ceec95910f399bbd6
 	}
 
 	/**
@@ -43,6 +61,10 @@ public class TokenProcessor{
 	 * @param b
 	 */
 	public void setFoldNumbers(boolean b){
+<<<<<<< HEAD
+		//TODO
+=======
+>>>>>>> 3e7356b96486f79bece2ae6ceec95910f399bbd6
 		setFoldNumbers = b;
 	}
 	
