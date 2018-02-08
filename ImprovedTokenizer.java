@@ -51,7 +51,7 @@ public class ImprovedTokenizer implements Tokenizer {
 
 		// **********************************************************************//
 
-		// ******************CHECKS FOR SINGLE QUOTES****************************//
+		// ************CHECKS FOR SINGLE QUOTES and "." "," ";" ":" "!" "?" ")"******//
 		// 2: Check for single quotes at the beginning and end of words and separate
 		// from tokens
 		// You will probably pass the tempTokens through two checkers to check for at
@@ -71,15 +71,54 @@ public class ImprovedTokenizer implements Tokenizer {
 				temp = temp.substring(1);
 			}
 
-			int endingSingleQuotes = 0;
+			int endingSymbolsCount = 0;
+			String endingSymbol = ""; //This could possibly add a white space after a word with no punct
 
-			while (temp.endsWith("'")) {
-				endingSingleQuotes++;
-				temp = temp.substring(0, temp.length() - 1);
+			while (temp.endsWith("'") || temp.endsWith(".") || temp.endsWith(",") || temp.endsWith(";")
+					|| temp.endsWith(":") || temp.endsWith("!") || temp.endsWith("?") || temp.endsWith(")")) {
+				endingSymbol = "";
+				if (temp.endsWith("'")) {
+					endingSymbolsCount++;
+					endingSymbol = "'";
+					temp = temp.substring(0, temp.length() - 1);
+				} else if (temp.endsWith(".")) {
+					endingSymbolsCount++;
+					endingSymbol = ".";
+					temp = temp.substring(0, temp.length() - 1);
+				} else if (temp.endsWith(",")) {
+					endingSymbolsCount++;
+					endingSymbol = ",";
+					temp = temp.substring(0, temp.length() - 1);
+				} else if (temp.endsWith(";")) {
+					endingSymbolsCount++;
+					endingSymbol = ";";
+					temp = temp.substring(0, temp.length() - 1);
+				} else if (temp.endsWith(":")) {
+					endingSymbolsCount++;
+					endingSymbol = ":";
+					temp = temp.substring(0, temp.length() - 1);
+				} else if (temp.endsWith("!")) {
+					endingSymbolsCount++;
+					endingSymbol = "!";
+					temp = temp.substring(0, temp.length() - 1);
+				} else if (temp.endsWith("?")) {
+					endingSymbolsCount++;
+					endingSymbol = "?";
+					temp = temp.substring(0, temp.length() - 1);
+				} else if (temp.endsWith(")")) {
+					endingSymbolsCount++;
+					endingSymbol = ")";
+					temp = temp.substring(0, temp.length() - 1);
+				}
+
+				//temp = temp.substring(0, temp.length() - 1);
 			}
+			
+			//Problem is that if there are different ending symbols it will save the right amount of
+			//ending symbols but it will make them all the same symbol. **NEED TO FIX THIS
 			firstPass.add(temp);
-			for (int i = 0; i < endingSingleQuotes; i++) {
-				firstPass.add("'");
+			for (int i = 0; i < endingSymbolsCount; i++) { 
+				firstPass.add(endingSymbol);
 			}
 		}
 
@@ -111,7 +150,7 @@ public class ImprovedTokenizer implements Tokenizer {
 						temp = temp.substring(0, temp.length() - 1);
 						secondPass.add(temp);
 					}
-					
+
 					for (int s = 0; s < endingSymbols; s++) {
 						secondPass.add(endPunct[e]);
 					}
@@ -119,6 +158,7 @@ public class ImprovedTokenizer implements Tokenizer {
 				}
 			}
 			secondPass.add(temp);
+
 		}
 		System.out.println("Second Pass: " + secondPass);
 
@@ -165,16 +205,15 @@ public class ImprovedTokenizer implements Tokenizer {
 		// 5: These characters ``. , ? : ; " ` ( ) % $" should be treated as separate
 		// tokens
 		ArrayList<String> fourthPass = new ArrayList<String>();
-		//String[] punct = { ".", ",", "?", ":", ";", "(", ")", "%", "$", "!" };
-		
-		
+		// String[] punct = { ".", ",", "?", ":", ";", "(", ")", "%", "$", "!" };
+
 		for (int i = 0; i < thirdPass.size(); i++) {
 			String temp = thirdPass.get(i);
 			if (Pattern.matches("[(]{0,}[a-zA-Z]+[.,?!;:%)]{0,}", temp)) {
 				while (temp.startsWith("(")) {
 					if (temp.startsWith("(")) {
 						fourthPass.add("(");
-					} 
+					}
 					temp = temp.substring(1);
 				}
 
@@ -186,7 +225,7 @@ public class ImprovedTokenizer implements Tokenizer {
 						temp = temp.substring(0, temp.length() - 1);
 						fourthPass.add(temp);
 					}
-					
+					// fourthPass.add(temp);
 					for (int s = 0; s < endingSymbols; s++) {
 						fourthPass.add(endPunct[e]);
 					}
@@ -194,34 +233,9 @@ public class ImprovedTokenizer implements Tokenizer {
 				}
 			}
 			fourthPass.add(temp);
+
 		}
-		
-		
-		
-		
-//		for (int i = 0; i < thirdPass.size(); i++) {
-//			for (int p = 0; p < punct.length; p++) {
-//				String temp = thirdPass.get(i);
-//				while (temp.startsWith(punct[p].toString())) {
-//					fourthPass.add(punct[p].toString());
-//
-//					temp = temp.substring(1);
-//				}
-//
-//				int endingSymbols = 0;
-//
-//				while (temp.endsWith(punct[p].toString())) {
-//					endingSymbols++;
-//					temp = temp.substring(0, temp.length() - 1);
-//				}
-//				fourthPass.add(temp);
-//				for (int e = 0; e < endingSymbols; e++) {
-//					fourthPass.add(punct[p].toString());
-//				}
-//			}
-//		}
-		
-		
+
 		System.out.println("Fourth Pass: " + fourthPass);
 
 		// **************************************************************************//
