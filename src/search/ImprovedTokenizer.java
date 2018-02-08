@@ -37,19 +37,21 @@ public class ImprovedTokenizer implements Tokenizer {
 	 */
 	public ArrayList<String> tokenize(String text) {
 		// TODO
-
+		// ******************SEPERATE WORDS ON WHITE SPACE*********************//
 		// 1: separate words based on white space (look at simpleTokenizer)
-		text = text.replaceAll("\\s+", " ");
 
+		text = text.replaceAll("\\s+", " ");
 		if (text.startsWith(" ")) {
 			text = text.substring(1);
 		}
 		if (text.endsWith(" ")) {
 			text = text.substring(0, text.length() - 1);
 		}
-
 		String[] tempTokens = text.split(" ");
 
+		// **********************************************************************//
+
+		// ************CHECKS FOR SINGLE QUOTES and "." "," ";" ":" "!" "?" ")"******//
 		// 2: Check for single quotes at the beginning and end of words and separate
 		// from tokens
 		// You will probably pass the tempTokens through two checkers to check for at
@@ -69,39 +71,109 @@ public class ImprovedTokenizer implements Tokenizer {
 				temp = temp.substring(1);
 			}
 
-			int endingSingleQuotes = 0;
+			int endingSymbolsCount = 0;
+			String endingSymbol = ""; //This could possibly add a white space after a word with no punct
 
-			while (temp.endsWith("'")) {
-				endingSingleQuotes++;
-				temp = temp.substring(0, temp.length() - 1);
+			while (temp.endsWith("'") || temp.endsWith(".") || temp.endsWith(",") || temp.endsWith(";")
+					|| temp.endsWith(":") || temp.endsWith("!") || temp.endsWith("?") || temp.endsWith(")")) {
+				endingSymbol = "";
+				if (temp.endsWith("'")) {
+					endingSymbolsCount++;
+					endingSymbol = "'"; 
+					firstPass.add(endingSymbol);
+					temp = temp.substring(0, temp.length() - 1);
+				} else if (temp.endsWith(".")) {
+					endingSymbolsCount++;
+					endingSymbol = "."; 
+					firstPass.add(endingSymbol);
+					temp = temp.substring(0, temp.length() - 1);
+				} else if (temp.endsWith(",")) {
+					endingSymbolsCount++;
+					endingSymbol = ","; 
+					firstPass.add(endingSymbol);
+					temp = temp.substring(0, temp.length() - 1);
+				} else if (temp.endsWith(";")) {
+					endingSymbolsCount++;
+					endingSymbol = ";"; 
+					firstPass.add(endingSymbol);
+					temp = temp.substring(0, temp.length() - 1);
+				} else if (temp.endsWith(":")) {
+					endingSymbolsCount++;
+					endingSymbol = ":"; 
+					firstPass.add(endingSymbol);
+					temp = temp.substring(0, temp.length() - 1);
+				} else if (temp.endsWith("!")) {
+					endingSymbolsCount++;
+					endingSymbol = "!"; 
+					firstPass.add(endingSymbol);
+					temp = temp.substring(0, temp.length() - 1);
+				} else if (temp.endsWith("?")) {
+					endingSymbolsCount++;
+					endingSymbol = "?"; 
+					firstPass.add(endingSymbol);
+					temp = temp.substring(0, temp.length() - 1);
+				} else if (temp.endsWith(")")) {
+					endingSymbolsCount++;
+					endingSymbol = ")"; 
+					firstPass.add(endingSymbol);
+					temp = temp.substring(0, temp.length() - 1);
+				}
+
+				//temp = temp.substring(0, temp.length() - 1);
 			}
-
+			
+			//Problem is that if there are different ending symbols it will save the right amount of
+			//ending symbols but it will make them all the same symbol. **NEED TO FIX THIS
 			firstPass.add(temp);
-
-			for (int i = 0; i < endingSingleQuotes; i++) {
-				firstPass.add("'");
-
+			for (int i = 0; i < endingSymbolsCount; i++) { 
+				//firstPass.add(endingSymbol);
 			}
-
 		}
 
 		System.out.println("First Pass: " + firstPass);
+		// ************************************************************************//
 
+		// ******************CHECKS FOR NUMBERS WITH +-****************************//
 		ArrayList<String> secondPass = new ArrayList<String>();
 		// 3: Numbers stay together. Can start with "+" or "-". Can have any number of
 		// digits, commas and periods.
 		// Must end in a digit
 		for (int i = 0; i < firstPass.size(); i++) {
 			String temp = firstPass.get(i);
-			if (Pattern.matches("[$(']{0,}[+-]{0,}\\d+[,.]+\\d+[.,?!::'%)]", firstPass.get(i))) {
-				temp.replaceAll("[,.!?();:']", "");
-				// System.out.print(temp);
+			if (Pattern.matches("[$(]{0,}[+-]{0,}\\d+[,.]+\\d+[.,?!;:%)]{0,}", temp)) {
+				while (temp.startsWith("$") || temp.startsWith("(")) {
+					if (temp.startsWith("$")) {
+						secondPass.add("$");
+					} else if (temp.startsWith("(")) {
+						secondPass.add("(");
+					}
+					temp = temp.substring(1);
+				}
+
+				int endingSymbols = 0;
+				String[] endPunct = { ".", ",", "?", ":", ";", ")", "%", "!" };
+				for (int e = 0; e < endPunct.length; e++) {
+					if (temp.endsWith(endPunct[e])) {
+						endingSymbols++;
+						temp = temp.substring(0, temp.length() - 1);
+						secondPass.add(temp);
+					}
+
+					for (int s = 0; s < endingSymbols; s++) {
+						secondPass.add(endPunct[e]);
+					}
+					endingSymbols = 0;
+				}
 			}
 			secondPass.add(temp);
-		}
 
+		}
 		System.out.println("Second Pass: " + secondPass);
-		
+
+		// *********************************************************************//
+
+		// *********************CHECKS FOR ABBREVIATIONS************************//
+
 		// 4:Check for a single letter followed by a period, if the period is followed
 		// by another single letter and period
 		// then this will be counted as an abbreviation and should be checked until
@@ -134,22 +206,48 @@ public class ImprovedTokenizer implements Tokenizer {
 		}
 
 		System.out.println("Third Pass: " + thirdPass);
+
+		// **************************************************************************//
+
+		// ********************CHECKS FOR ANY OTHER SYMBOLS**************************//
 		// 5: These characters ``. , ? : ; " ` ( ) % $" should be treated as separate
 		// tokens
 		ArrayList<String> fourthPass = new ArrayList<String>();
-		String [] punct = {".", ",", "?", ":", ";", "'", "(", ")", "%", "$", "!"};  
-		for (int i=0; i<thirdPass.size(); i++) { 
+		// String[] punct = { ".", ",", "?", ":", ";", "(", ")", "%", "$", "!" };
+
+		for (int i = 0; i < thirdPass.size(); i++) {
 			String temp = thirdPass.get(i);
-			for (int j=0; j<punct.length; j++) {
-				if (temp.equals(punct[j])) { 
-					temp.replaceAll("[,.!$%?();:']", " " + punct[j]+ " ");
-					System.out.println(temp); //This is printing out all the single quotes
+			if (Pattern.matches("[(]{0,}[a-zA-Z]+[?!;:%)-]{0,}", temp)) {
+				while (temp.startsWith("(")) {
+					if (temp.startsWith("(")) {
+						fourthPass.add("(");
+					}
+					temp = temp.substring(1);
+				}
+
+				int endingSymbols = 0;
+				String[] endPunct = { "?", ":", ";", ")", "%", "!" };
+				for (int e = 0; e < endPunct.length; e++) {
+					if (temp.endsWith(endPunct[e])) {
+						endingSymbols++;
+						temp = temp.substring(0, temp.length() - 1);
+						fourthPass.add(temp);
+					}
+					// fourthPass.add(temp);
+					for (int s = 0; s < endingSymbols; s++) {
+						fourthPass.add(endPunct[e]);
+					}
+					endingSymbols = 0;
 				}
 			}
 			fourthPass.add(temp);
-		} 
-		System.out.println("Fourth Pass: "+fourthPass);
-		return null;
+
+		}
+
+		System.out.println("Fourth Pass: " + fourthPass);
+
+		// **************************************************************************//
+		return fourthPass;
 	}
 
 	/**
