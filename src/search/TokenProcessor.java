@@ -11,65 +11,35 @@ import java.util.ArrayList;
  *
  */
 public class TokenProcessor{
-<<<<<<< HEAD
-=======
-	private boolean setLowercase = false; 
-	private boolean setStem = false;
-	private boolean setFoldNumbers = false;
-	private ArrayList<String> stopList = new ArrayList<String>(); 
-	
-	private Porter porter;
-	
-	
->>>>>>> b398ec41c0fc5470dfe86a8a1a7de53442595056
-	private boolean setLowercase = false; 
-	private boolean setStem = false;
-	private boolean setFoldNumbers = false;
-	private ArrayList<String> stopList = new ArrayList<String>(); 
-	
-	private Porter porter;
-	
-	
-	
+
+	public boolean lowercaseSet = false; 
+	public boolean stemSet = false;
+	public boolean foldNumbersSet = false;
+	public ArrayList<String> stopList = new ArrayList<String>(); 
+	public Porter stemmer = null; //I changed the name to make more sense
+
 	/**
 	 * Set whether or not to lowercase the tokens.
 	 * 
 	 * @param b
 	 */
-<<<<<<< HEAD
 
-	
 	public void setLowercase(boolean b){   
-		setLowercase = b;  		
+		lowercaseSet = b;  		
 
-=======
-<<<<<<< HEAD
-	public void setLowercase(boolean b){
-		//TODO
-		setLowercase = b;
-=======
-	public void setLowercase(boolean b){   
-		setLowercase = b;  		
->>>>>>> 3e7356b96486f79bece2ae6ceec95910f399bbd6
->>>>>>> b398ec41c0fc5470dfe86a8a1a7de53442595056
-	}
+}
 	
 	/**
 	 * Set whether or not to stem the tokens using the Porter stemmer
 	 * @param b
 	 */
 	public void setStem(boolean b){
-<<<<<<< HEAD
 		//TODO
-		setStem = b;
-=======
-		setStem = b; 
-<<<<<<< HEAD
-
-=======
+		stemSet = b;
+		if(stemmer == null) {
+			stemmer = new Porter();
+		}
 		
->>>>>>> 3e7356b96486f79bece2ae6ceec95910f399bbd6
->>>>>>> b398ec41c0fc5470dfe86a8a1a7de53442595056
 	}
 
 	/**
@@ -78,15 +48,7 @@ public class TokenProcessor{
 	 * @param b
 	 */
 	public void setFoldNumbers(boolean b){
-<<<<<<< HEAD
-
-=======
-<<<<<<< HEAD
-		//TODO
-=======
->>>>>>> 3e7356b96486f79bece2ae6ceec95910f399bbd6
->>>>>>> b398ec41c0fc5470dfe86a8a1a7de53442595056
-		setFoldNumbers = b;
+		foldNumbersSet = b;
 	}
 	
 	/**
@@ -96,8 +58,8 @@ public class TokenProcessor{
 	 * @param list The list of stop words
 	 */
 	public void setStopList(ArrayList<String> list){
-		
-		//BufferedReader list =  
+		//Maybe use a new Hash Set of type String 
+		this.stopList = list;
 	}
 
 	/**
@@ -109,6 +71,28 @@ public class TokenProcessor{
 	 */
 	public ArrayList<String> process(ArrayList<String> tokens){
 		//TODO	
-		return null;
+		ArrayList<String> tokensProcessed = new ArrayList<String>();
+		for(String temp: tokens) {//This makes a duplicate of tokens in the form of a string
+			if(stopList != null ) {//idk about this statement
+				if(lowercaseSet) {
+					temp = temp.toLowerCase();
+				}
+				
+				if(stemSet) {
+					temp = stemmer.stem(temp);
+				}
+				
+				if(foldNumbersSet && temp.matches("")) {//Ask about how to write the symbols in +-,. 
+					temp = "<NUM>";
+				}
+				tokensProcessed.add(temp);
+			}
+		}
+		System.out.println("Tokens Processed: "+tokensProcessed);
+		return tokensProcessed;
 	}
+	
+	
+	
+	
 }

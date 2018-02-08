@@ -101,6 +101,7 @@ public class ImprovedTokenizer implements Tokenizer {
 		}
 
 		System.out.println("Second Pass: " + secondPass);
+		
 		// 4:Check for a single letter followed by a period, if the period is followed
 		// by another single letter and period
 		// then this will be counted as an abbreviation and should be checked until
@@ -142,7 +143,7 @@ public class ImprovedTokenizer implements Tokenizer {
 			for (int j=0; j<punct.length; j++) {
 				if (temp.equals(punct[j])) { 
 					temp.replaceAll("[,.!$%?();:']", " " + punct[j]+ " ");
-					System.out.println(temp);
+					System.out.println(temp); //This is printing out all the single quotes
 				}
 			}
 			fourthPass.add(temp);
