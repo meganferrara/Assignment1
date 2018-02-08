@@ -7,32 +7,38 @@ import java.util.ArrayList;
  * on tokens.
  * 
  * @author Megan and Isabelle
- *@version 1/26/18
+ * @version 1/26/18
  *
  */
 public class TokenProcessor{
-	
-	
+
+	public boolean lowercaseSet = false; 
+	public boolean stemSet = false;
+	public boolean foldNumbersSet = false;
+	public ArrayList<String> stopList = null; 
+	public Porter stemmer = null; //I changed the name to make more sense
+
 	/**
 	 * Set whether or not to lowercase the tokens.
 	 * 
 	 * @param b
 	 */
-	public void setLowercase(boolean b){  
-		//change this when find out where to get text 
-		String text = new String(); 
-		if (b==true) {
-			text = text.toLowerCase(); 
-		}
-		
-	}
+
+	public void setLowercase(boolean b){   
+		lowercaseSet = b;  		
+
+}
 	
 	/**
 	 * Set whether or not to stem the tokens using the Porter stemmer
 	 * @param b
 	 */
 	public void setStem(boolean b){
-		//TODO 
+		//TODO
+		stemSet = b;
+		if(stemmer == null) {
+			stemmer = new Porter();
+		}
 		
 	}
 
@@ -42,7 +48,7 @@ public class TokenProcessor{
 	 * @param b
 	 */
 	public void setFoldNumbers(boolean b){
-		//TODO
+		foldNumbersSet = b;
 	}
 	
 	/**
@@ -52,7 +58,8 @@ public class TokenProcessor{
 	 * @param list The list of stop words
 	 */
 	public void setStopList(ArrayList<String> list){
-		//TODO
+		//Maybe use a new Hash Set of type String 
+		this.stopList = list;
 	}
 
 	/**
@@ -64,6 +71,32 @@ public class TokenProcessor{
 	 */
 	public ArrayList<String> process(ArrayList<String> tokens){
 		//TODO	
-		return null;
+		ArrayList<String> tokensProcessed = new ArrayList<String>();
+		for(String temp: tokens) {//This makes a duplicate of tokens in the form of a string
+			if(stopList == null ) {//idk about this statement
+				if(lowercaseSet) {
+					temp = temp.toLowerCase();
+				}
+				if(stopList.contains(temp)) {
+					temp = temp.replaceAll(temp, "");
+				}
+				if(stemSet) {
+					temp = stemmer.stem(temp);
+				}
+				
+				if(foldNumbersSet && temp.matches("[+-]{0,}\\d+[.,]{0,}\\d+")) {//Ask about how to write the symbols in +-,. 
+					temp = "<NUM>";
+				}
+				
+
+				tokensProcessed.add(temp);
+			}
+		}
+		System.out.println("Tokens Processed: "+tokensProcessed);
+		return tokensProcessed;
 	}
+	
+	
+	
+	
 }

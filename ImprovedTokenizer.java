@@ -1,8 +1,10 @@
 package search;
 
 import java.util.ArrayList;
+
+import java.util.Arrays;
+
 import java.util.regex.Pattern;
-import java.util.regex.Matcher;
 
 /**
  * An improved tokenizer class that uses the following tokenization rules: -
@@ -22,77 +24,208 @@ import java.util.regex.Matcher;
  * ``," and ``?" as separate tokens.
  * 
  * @author Megan and Isabelle
- * @version 1/30/18
+ * @version 2/7/18
  *
  */
 public class ImprovedTokenizer implements Tokenizer {
 	// Given text, tokenize the text into individual tokens
 	// and return an ArrayList with those tokens
-	
-	ArrayList<String> aList;
+
 	/**
-	 * Given text, tokenize the text into individual tokens and 
-	 * return an ArrayList with those tokens
+	 * Given text, tokenize the text into individual tokens and return and ArrayList
+	 * with those tokens
 	 */
-	public ArrayList<String> tokenize(String text){	
-		//TODO
-		aList = new ArrayList<String>();
-		//1: separate words based on white space (look at simpleTokenizer)
+	public ArrayList<String> tokenize(String text) {
+		// TODO
+		// ******************SEPERATE WORDS ON WHITE SPACE*********************//
+		// 1: separate words based on white space (look at simpleTokenizer)
+
 		text = text.replaceAll("\\s+", " ");
-		
-		if(text.startsWith(" ")) {
-			//put something here that will take care of the whitespace before word
-			text = text.substring(1, text.length());
+		if (text.startsWith(" ")) {
+			text = text.substring(1);
 		}
-		if(text.endsWith(" ")) {
-			//put something here that will take care of the whitespace after word
-			text = text.substring(0, text.length()-1);
+		if (text.endsWith(" ")) {
+			text = text.substring(0, text.length() - 1);
 		}
-		//You will probably need something that will save this word after going through if statements
-		//splits the tokens above from whitespace around it
-		String[] tempTokens = text.split(" "); 
-		System.out.println("# of Tokens split on whitespace:"+tempTokens.length);	
-		
-		//2: Check for single quotes at the beginning and end of words and separate from tokens
-		//You will probably pass the tempTokens through two checkers to check for at the beginning and at the end
-		//ArrayList<String> singleQuotes = new ArrayList<String>;
-		
-		//Temp: tempTokens --> this is basically duplicating the tempTokens string to look through
-		for(String temp: tempTokens) {
-			while(temp.startsWith("'")) {
-				temp.split("'");
-				System.out.println("# of Starts with SingleQuote Tokens:"+tempTokens.length);
-				//singleQuotes.add("'");
-				//text = text.substring(1);
+		String[] tempTokens = text.split(" ");
+
+		// **********************************************************************//
+
+		// ******************CHECKS FOR SINGLE QUOTES****************************//
+		// 2: Check for single quotes at the beginning and end of words and separate
+		// from tokens
+		// You will probably pass the tempTokens through two checkers to check for at
+		// the beginning and at the end
+		ArrayList<String> firstPass = new ArrayList<String>();
+
+		// Temp: tempTokens --> this is basically duplicating the tempTokens string to
+		// look through
+		for (String temp : tempTokens) {
+
+			while (temp.startsWith("'") || temp.startsWith("`")) {
+				if (temp.startsWith("'")) {
+					firstPass.add("'");
+				} else if (temp.startsWith("`")) {
+					firstPass.add("`");
+				}
+				temp = temp.substring(1);
 			}
-			while(temp.endsWith("'")) {
-				temp.split("'");
-				//System.out.println("Ends with SingleQuote Tokens:"+tempTokens.length);
-				//text = text.substring(0, text.length()-1);
+
+			int endingSingleQuotes = 0;
+
+			while (temp.endsWith("'")) {
+				endingSingleQuotes++;
+				temp = temp.substring(0, temp.length() - 1);
 			}
-				
+			firstPass.add(temp);
+			for (int i = 0; i < endingSingleQuotes; i++) {
+				firstPass.add("'");
+			}
+		}
+
+		System.out.println("First Pass: " + firstPass);
+		// ************************************************************************//
+
+		// ******************CHECKS FOR NUMBERS WITH +-****************************//
+		ArrayList<String> secondPass = new ArrayList<String>();
+		// 3: Numbers stay together. Can start with "+" or "-". Can have any number of
+		// digits, commas and periods.
+		// Must end in a digit
+		for (int i = 0; i < firstPass.size(); i++) {
+			String temp = firstPass.get(i);
+			if (Pattern.matches("[$(]{0,}[+-]{0,}\\d+[,.]+\\d+[.,?!;:%)]{0,}", temp)) {
+				while (temp.startsWith("$") || temp.startsWith("(")) {
+					if (temp.startsWith("$")) {
+						secondPass.add("$");
+					} else if (temp.startsWith("(")) {
+						secondPass.add("(");
+					}
+					temp = temp.substring(1);
+				}
+
+				int endingSymbols = 0;
+				String[] endPunct = { ".", ",", "?", ":", ";", ")", "%", "!" };
+				for (int e = 0; e < endPunct.length; e++) {
+					if (temp.endsWith(endPunct[e])) {
+						endingSymbols++;
+						temp = temp.substring(0, temp.length() - 1);
+						secondPass.add(temp);
+					}
+					
+					for (int s = 0; s < endingSymbols; s++) {
+						secondPass.add(endPunct[e]);
+					}
+					endingSymbols = 0;
+				}
+			}
+			secondPass.add(temp);
+		}
+		System.out.println("Second Pass: " + secondPass);
+
+		// *********************************************************************//
+
+		// *********************CHECKS FOR ABBREVIATIONS************************//
+
+		// 4:Check for a single letter followed by a period, if the period is followed
+		// by another single letter and period
+		// then this will be counted as an abbreviation and should be checked until
+		// there is no more single letters and periods following
+		// Once the end of the abbreviation is found you will go through and remove all
+		// the periods
+		// if not an abbreviation separate these into individual tokens.
+
+		ArrayList<String> thirdPass = new ArrayList<String>();
+		// I.B.M. <-- for reference when looking at the for loop and thinking in terms
+		// of index
+		for (int i = 0; i < secondPass.size(); i++) {
+			int k = i; // This will be to check the next position in the token
+			while (k + 1 < secondPass.size() && secondPass.get(k).length() == 1 && secondPass.get(k + 1).equals(".")) {
+				k += 2;
+			}
+			if (k - i > 2) {
+				// making an empty string that we will add our abbreviation to
+				String abbrevTokens = "";
+				for (int j = i; j < k; j += 2) {
+					abbrevTokens += secondPass.get(j);
+				}
+
+				thirdPass.add(abbrevTokens);
+
+				i = k - 1;
+			} else {
+				thirdPass.add(secondPass.get(i));
+			}
+		}
+
+		System.out.println("Third Pass: " + thirdPass);
+
+		// **************************************************************************//
+
+		// ********************CHECKS FOR ANY OTHER SYMBOLS**************************//
+		// 5: These characters ``. , ? : ; " ` ( ) % $" should be treated as separate
+		// tokens
+		ArrayList<String> fourthPass = new ArrayList<String>();
+		//String[] punct = { ".", ",", "?", ":", ";", "(", ")", "%", "$", "!" };
+		
+		
+		for (int i = 0; i < thirdPass.size(); i++) {
+			String temp = thirdPass.get(i);
+			if (Pattern.matches("[(]{0,}[a-zA-Z]+[.,?!;:%)]{0,}", temp)) {
+				while (temp.startsWith("(")) {
+					if (temp.startsWith("(")) {
+						fourthPass.add("(");
+					} 
+					temp = temp.substring(1);
+				}
+
+				int endingSymbols = 0;
+				String[] endPunct = { ".", ",", "?", ":", ";", ")", "%", "!" };
+				for (int e = 0; e < endPunct.length; e++) {
+					if (temp.endsWith(endPunct[e])) {
+						endingSymbols++;
+						temp = temp.substring(0, temp.length() - 1);
+						fourthPass.add(temp);
+					}
+					
+					for (int s = 0; s < endingSymbols; s++) {
+						fourthPass.add(endPunct[e]);
+					}
+					endingSymbols = 0;
+				}
+			}
+			fourthPass.add(temp);
 		}
 		
-		Pattern p = Pattern.compile("[0-9+-.]{2}"); 
 		
-		//3: Numbers stay together. Can start with "+" or "-". Can have any number of digits, commas and periods. 
-		//Must end in a digit    
-//		if (p.matcher(text)) {
-//			
+		
+		
+//		for (int i = 0; i < thirdPass.size(); i++) {
+//			for (int p = 0; p < punct.length; p++) {
+//				String temp = thirdPass.get(i);
+//				while (temp.startsWith(punct[p].toString())) {
+//					fourthPass.add(punct[p].toString());
+//
+//					temp = temp.substring(1);
+//				}
+//
+//				int endingSymbols = 0;
+//
+//				while (temp.endsWith(punct[p].toString())) {
+//					endingSymbols++;
+//					temp = temp.substring(0, temp.length() - 1);
+//				}
+//				fourthPass.add(temp);
+//				for (int e = 0; e < endingSymbols; e++) {
+//					fourthPass.add(punct[p].toString());
+//				}
+//			}
 //		}
 		
-		//4:Check for a single letter followed by a period, if the period is followed by another single letter and period 
-		//then this will be counted as an abbreviation and should be checked until there is no more single letters and periods following
-		//Once the end of the abbreviation is found you will go through and remove all the periods
-		//if not an abbreviation separate these into individual tokens.
 		
-		//5: These characters  ``\. , ? : ; " ` ( ) % $"  should be treated as separate tokens  
-		String regexPunct = "\\p{Punct}"; 
-		if (text.equals(regexPunct)){
-			String punctuation = text; 
-			//text = text.replaceAll(\\p{Punct}, " ");
-		}
-		return null;
+		System.out.println("Fourth Pass: " + fourthPass);
+
+		// **************************************************************************//
+		return fourthPass;
 	}
 
 	/**
