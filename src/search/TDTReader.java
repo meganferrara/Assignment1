@@ -11,11 +11,11 @@ import java.util.ArrayList;
  * Document at a time.
  * 
  * @author Megan and Isabelle
- * @version 2/7/18
+ * @version 1/30/18
  * 
  */
 public class TDTReader implements DocumentReader {
-	private Tokenizer tokenizer;
+	private Tokenizer tokenizer = new ImprovedTokenizer();
 	private TokenProcessor tokenProcessor = null;
 	private int nextDocID = 0;
 	private String nextDocText;
@@ -25,10 +25,12 @@ public class TDTReader implements DocumentReader {
 	private ArrayList<Document> docArrayList; // An Array List for documents
 	// Should we make an array list or a Linked List to save the documents in the
 	// corpus file??? TBD
-	BufferedReader txtFile;
+	BufferedReader txtFile; 
+	BufferedReader sampFile;
 	String line;
 	private String file;
-	ArrayList<Document> documentArray = new ArrayList<Document>();
+	ArrayList<Document> documentArray = new ArrayList<Document>(); 
+	Dictionary dictionaryList = new Dictionary();
 
 	// ***-----NOTES OR CONCERNS--***//
 	// for the nextDocID should we start that at -1 so it numbers the docs starting
@@ -48,10 +50,10 @@ public class TDTReader implements DocumentReader {
 	 */
 	public TDTReader(String documentFile) throws IOException {
 		// save docs in an Array List
-		// docArrayList = new ArrayList<Document>();
+		//docArrayList = new ArrayList<Document>();
 
 		// tokenizer = new SimpleTokenizer();
-		tokenizer = new ImprovedTokenizer();
+		//tokenizer = new ImprovedTokenizer();
 		this.file = documentFile;
 		read();
 		next();
@@ -61,16 +63,17 @@ public class TDTReader implements DocumentReader {
 		try {
 
 			txtFile = new BufferedReader(new FileReader(file));
-			line = txtFile.readLine();
-
+			line = txtFile.readLine(); 
+				
 			// this while loop takes the pointer to the first line of article
-			while (!(txtFile.readLine()).equals("<DOC>")) {
+			while (!(txtFile.readLine()).equals("<DOC>")) {   	
 			}
-
-			if (line.equals("<DOC>")) {
-				sampleFile += "\n" + line;
-			}
-
+			
+			if (line.equals("<TEXT>")) {
+				sampleFile += "\n" + line; 	
+				
+			}  
+			 	
 			// pointer still at first line of article
 			// while (line != null && !(line = txtFile.readLine()).equals("</DOC>")) {
 			while (line != null && !line.equals("</DOC>")) {
@@ -79,15 +82,13 @@ public class TDTReader implements DocumentReader {
 				// takes that line and adds it to sampleFile
 				sampleFile += "\n" + line;
 				// sampleFile+= line + "\n";
-				// System.out.println(sampleFile);
-
 			}
-			// System.out.println(sampleFile);
+			//System.out.println(sampleFile);
 			Document doc = new Document(nextDocID, tokenizer.tokenize(sampleFile));
-			nextDocID++;
+			nextDocID++; 
 			sampleFile = " ";
 			documentArray.add(doc);
-
+			
 			while (hasNext()) {
 				Document nextDoc = next();
 				documentArray.add(nextDoc);
@@ -97,7 +98,31 @@ public class TDTReader implements DocumentReader {
 			e.printStackTrace();
 		}
 	}
-
+	
+	public Dictionary addtoDictionary (String fileName) throws IOException {  	
+		try { 		
+			sampFile = new BufferedReader(new FileReader(fileName)); 
+			line = sampFile.readLine(); 
+			while (line!= null) {
+				if (sampFile.readLine().equals("<TEXT>")) { 
+					while (!(line).equals("</TEXT>")) { 
+						String str = sampFile.readLine();
+						ArrayList<String> wordList = new ArrayList<String> (tokenizer.tokenize(str));
+						for (int i=0; i<wordList.size(); i++) { 
+							dictionaryList.addWord(wordList.get(i).toString()); 
+						}					
+					} 
+				} 
+			} 
+			
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
+		
+		return dictionaryList;
+	}
+	
 	/**
 	 * Set the tokenizer for this reader
 	 * 
@@ -146,7 +171,7 @@ public class TDTReader implements DocumentReader {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Document doc = new Document(nextDocID++, tokenizer.tokenize(sampleFile));
+		Document doc = new Document(nextDocID++, tokenizer.tokenize(sampleFile)); 
 		sampleFile = " ";
 		return doc;
 	}

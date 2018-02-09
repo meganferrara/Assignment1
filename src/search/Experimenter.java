@@ -21,14 +21,18 @@ public class Experimenter {
 		TDTReader readFile = new TDTReader ("ap89.txt"); 
 		
 		SimpleTokenizer sToken = new SimpleTokenizer();  
-		readFile.setTokenizer(sToken); 
+		readFile.setTokenizer(sToken);  
+		
+		Dictionary dictionary = new Dictionary(); 
+		dictionary = readFile.addtoDictionary("ap89.txt"); 
+		
 		ImprovedTokenizer iToken = new ImprovedTokenizer(); 
 		readFile.setTokenizer(iToken); 
 		
 		ArrayList<String> stopList = new ArrayList<String>();  
 		stopList.add("stoplist"); 
-		TokenProcessor list = new TokenProcessor(); 
-		list.setStopList(stopList); 
+		TokenProcessor processTokens = new TokenProcessor(); 
+		processTokens.setStopList(stopList); 
 		
 		
 	} 
